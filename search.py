@@ -102,7 +102,7 @@ with open(sys.argv[1]) as inp:
         print(c)
         subprocess.getoutput(c)
     subprocess.getoutput("rm " + sys.argv[2])
-    subprocess.getoutput("bash topdf.sh " + " ".join(outputs) + " " + sys.argv[2])
+    subprocess.getoutput("bash topdf.sh " + " " + sys.argv[2] + " " + " ".join(outputs))
     subprocess.getoutput("rm " + " ".join(outputs))
 
 #readjsondata("vteslib.json")
