@@ -8,20 +8,15 @@ def addnormalized(arg):
     name = arg['Name']
     if ('Advanced' in arg) and arg['Advanced']:
         name += " adv"
+    if ('Adv' in arg) and arg['Adv']:
+        name += " adv"
     arg['normalized'] = getnormalized(name)
     return arg
 def find_pictures(name):
     aux = subprocess.getoutput(['find pictures -name "' + name + '.*"']).split("\n")
     return [f for f in aux if os.path.isfile(f)]
 def findfiles(arg):
-    for c in arg:
-        if 'id' in c:
-            return ["cards/" + c['id'] + ".jpg"]
-    for c in arg:
-        found = find_pictures(c['normalized'])
-        if found:
-            return found
-    return None
+    return ["cards/" + c['id'] + ".jpg" for c in arg if 'id' in c] + sum([find_pictures(c['normalized']) for c in arg], [])
 def addextra(arg):
     return addnormalized(arg)
     
@@ -68,6 +63,10 @@ def find_card(name, cards):
             best_score = score
     return best
 
+def pick_random(cards):
+    import random
+    return cards[random.randint(0, len(cards) - 1)]
+
 
 if len(sys.argv) < 3:
     print("usage: search.py input output")
@@ -91,7 +90,7 @@ with open(sys.argv[1]) as inp:
         if not found:
             print("ERROR: ", f, card, found)
             sys.exit(1)
-        files += [found[0]] * n
+        files += [pick_random(found) for i in range(0, n)]
     for i in range(0, len(files), 9):
         output = "merged_" + str(i // 9) + ".jpg"
         commands.append(" ".join(["./merge_cards.sh", output] + files[i:i+9]))
