@@ -16,7 +16,11 @@ def find_pictures(name):
     aux = subprocess.getoutput(['find pictures -name "' + name + '.*"']).split("\n")
     return [f for f in aux if os.path.isfile(f)]
 def findfiles(arg):
-    return ["cards/" + c['id'] + ".jpg" for c in arg if 'id' in c] + sum([find_pictures(c['normalized']) for c in arg], [])
+    def exists(f):
+        return os.path.isfile(f)
+    def path(c):
+        return "cards/" + c['id'] + ".jpg"
+    return [path(c) for c in arg if 'id' in c and exists(path(c))] + sum([find_pictures(c['normalized']) for c in arg], [])
 def addextra(arg):
     return addnormalized(arg)
     
